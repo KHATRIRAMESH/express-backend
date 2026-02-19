@@ -99,20 +99,20 @@ The server will start at `http://localhost:3000` (or your configured PORT).
 
 ### Authentication
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/auth/register` | Register a new user | No |
-| POST | `/api/auth/login` | Login and get JWT token | No |
+| Method | Endpoint             | Description             | Auth Required |
+| ------ | -------------------- | ----------------------- | ------------- |
+| POST   | `/api/auth/register` | Register a new user     | No            |
+| POST   | `/api/auth/login`    | Login and get JWT token | No            |
 
 ### Blog Posts
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/post` | Get all posts | No |
-| GET | `/api/post/:id` | Get a single post | No |
-| POST | `/api/post` | Create a new post | Yes |
-| PUT | `/api/post/:id` | Update a post | Yes (author only) |
-| DELETE | `/api/post/:id` | Delete a post | Yes (author only) |
+| Method | Endpoint        | Description       | Auth Required     |
+| ------ | --------------- | ----------------- | ----------------- |
+| GET    | `/api/post`     | Get all posts     | No                |
+| GET    | `/api/post/:id` | Get a single post | No                |
+| POST   | `/api/post`     | Create a new post | Yes               |
+| PUT    | `/api/post/:id` | Update a post     | Yes (author only) |
+| DELETE | `/api/post/:id` | Delete a post     | Yes (author only) |
 
 ---
 
@@ -163,49 +163,64 @@ curl -X POST http://localhost:3000/api/post \
 ```
 Day-4/
 ├── src/
-│   ├── app.js              # Main application entry point
+│   ├── app.js                  # Main application entry point
 │   ├── config/
-│   │   └── db.js           # Database connection
-│   ├── controllers/        # Route controllers (optional)
+│   │   └── db.js               # Database connection
+│   ├── controllers/
+│   │   ├── auth.controller.js  # Auth request handlers (register, login)
+│   │   └── posts.controller.js # Posts request handlers (CRUD operations)
 │   ├── middleware/
 │   │   └── authMiddleware.js   # JWT authentication middleware
 │   ├── models/
-│   │   └── schema.js       # Drizzle ORM schema (users, posts)
+│   │   └── schema.js           # Drizzle ORM schema (users, posts)
 │   ├── routes/
-│   │   ├── auth.route.js   # Authentication routes
-│   │   └── posts.route.js  # Blog post routes
-│   ├── services/           # Business logic (optional)
-│   └── utils/              # Utility functions
-├── drizzle/                # Database migrations
-├── drizzle.config.js       # Drizzle Kit configuration
+│   │   ├── auth.route.js       # Authentication route definitions
+│   │   └── posts.route.js      # Blog post route definitions
+│   ├── services/
+│   │   ├── auth.service.js     # Auth business logic (user CRUD, JWT, password)
+│   │   └── posts.service.js    # Posts business logic (database operations)
+│   └── utils/                  # Utility functions
+├── drizzle/                    # Database migrations
+├── drizzle.config.js           # Drizzle Kit configuration
 ├── package.json
 └── README.md
 ```
+
+### Architecture
+
+The project follows a **layered architecture** pattern:
+
+- **Routes** → Define API endpoints and apply middleware
+- **Controllers** → Handle HTTP requests/responses and validation
+- **Services** → Contain business logic and database operations
 
 ---
 
 ## Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with hot reload |
-| `npm run generate` | Generate new database migrations |
-| `npm run migrate` | Apply database migrations |
-| `npm run test` | Run tests with Jest |
+| Command            | Description                              |
+| ------------------ | ---------------------------------------- |
+| `npm run dev`      | Start development server with hot reload |
+| `npm run generate` | Generate new database migrations         |
+| `npm run migrate`  | Apply database migrations                |
+| `npm run test`     | Run tests with Jest                      |
 
 ---
 
 ## Troubleshooting
 
 ### "DATABASE_URL is not set"
+
 Make sure you created a `.env` file with your database connection string.
 
 ### "Connection refused" or database errors
+
 - Verify your `DATABASE_URL` is correct
 - Check if your database server is running
 - Ensure your IP is whitelisted (for cloud databases like Neon)
 
 ### "Invalid token" or authorization errors
+
 - Make sure you're including the JWT token in the `Authorization` header
 - Use the format: `Authorization: Bearer YOUR_TOKEN`
 - Tokens expire - try logging in again to get a fresh token
