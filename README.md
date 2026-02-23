@@ -36,7 +36,7 @@ Make sure you have the following installed:
 
 ```bash
 git clone <repository-url>
-cd Day-4
+cd express-backend
 ```
 
 ### Step 2: Install Dependencies
