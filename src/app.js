@@ -14,6 +14,30 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 app.use(express.json()); // Middleware to parse JSON bodies
+
+app.get('/debug', async (req, res) => {
+    try {
+        // Check env var
+        if (!process.env.DATABASE_URL) {
+            return res.json({ error: 'DATABASE_URL is not set' });
+        }
+
+        // Test raw fetch to Neon
+        const response = await fetch(process.env.DATABASE_URL.split('@')[1].split('/')[0]);
+        res.json({
+            dbUrlExists: true,
+            dbUrlPrefix: process.env.DATABASE_URL.substring(0, 15),
+            fetchStatus: response.status
+        });
+    } catch (e) {
+        res.json({
+            dbUrlExists: !!process.env.DATABASE_URL,
+            dbUrlPrefix: process.env.DATABASE_URL?.substring(0, 15),
+            error: e.message,
+            cause: e.cause?.message
+        });
+    }
+});
 app.get("/", (req, res) => {
     res.send("Blog Post API - Welcome!");
 });
